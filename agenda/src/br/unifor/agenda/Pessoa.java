@@ -51,4 +51,10 @@ public class Pessoa implements Marshalable {
 		}
 
 	}
+	
+	@Override
+	public String toString() {
+		
+		return "Nome "+getName()+" "+getEndereco();
+	}
 }

@@ -50,4 +50,9 @@ public class Endereco implements Marshalable {
 		}
 		
 	}
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return "Rua "+getRua() +" Bairro "+getBairro();
+	}
 }
