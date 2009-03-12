@@ -7,7 +7,7 @@ import rme.MultiServerStub;
 import rme.RmeStream;
 import rme.RmeStreamFc;
 
-public class PhoneBook_Stub extends MultiServerStub{
+public class PhoneBook_Stub extends MultiServerStub {
 
 	public Pessoa getPhoneAddress(String name) throws NetworkException {
 		
@@ -15,6 +15,7 @@ public class PhoneBook_Stub extends MultiServerStub{
 		Stream stream = (new RmeStreamFc()).createStream();
 		try {
 			stream.write("getPhoneAddress");
+			stream.write(1);
 			stream.write(name);
 			
 			RmeStream lStream = (RmeStream)super.invoke(stream, 1, '?', 0);

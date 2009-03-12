@@ -1,3 +1,4 @@
+
 package br.unifor.agenda.server;
 
 import rme.RmeConfigurator;
@@ -6,7 +7,7 @@ import arcademis.server.AlreadyBoundException;
 import br.unifor.agenda.PhoneBook;
 import br.unifor.agenda.PhoneBook_Stub;
 
-public class AgendaServer {
+public class AgendaServerNaming {
 	/*public static void main(String args[]) {
 		try {
 			rme.RmeConfigurator c = new rme.RmeConfigurator();
@@ -35,15 +36,12 @@ public class AgendaServer {
 	{
         try
         {
-        	RmeConfigurator c = new RmeConfigurator();
+			RmeConfigurator c = new RmeConfigurator();
 			c.configure();
 			
-			PhoneBook o = new PhoneBook();			
-			o.insert("Matheus", "Marcos Macêdo", "Aldeota");
-			o.insert("Fulano", " Macêdo Marcos", "Varjota");
-			rme.naming.RmeNaming.bind("obj", o);
-			o.activate();			
+			RmeServiceDirectory_Impl nameService = new RmeServiceDirectory_Impl();
 
+			nameService.activate();
         }
         catch (Exception e)
         {
@@ -51,3 +49,4 @@ public class AgendaServer {
         }
 	}
 }
+
