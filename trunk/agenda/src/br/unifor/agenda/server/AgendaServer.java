@@ -2,52 +2,45 @@ package br.unifor.agenda.server;
 
 import rme.RmeConfigurator;
 import rme.naming.RmeServiceDirectory_Impl;
+import arcademis.ArcademisException;
+import arcademis.ReconfigurationException;
+import arcademis.concreteComponents.MalformedURLException;
 import arcademis.server.AlreadyBoundException;
 import br.unifor.agenda.PhoneBook;
 import br.unifor.agenda.PhoneBook_Stub;
+import br.unifor.mobile.MobileAction;
 
 public class AgendaServer {
-	/*public static void main(String args[]) {
+
+	public static void main(String[] args) {
+		RmeConfigurator c = new RmeConfigurator();
 		try {
-			rme.RmeConfigurator c = new rme.RmeConfigurator();
 			c.configure();
-			PhoneBook o = new PhoneBook();
-			rme.naming.RmeNaming.bind("obj", o);
-			o.activate();
 
-			o.insert("Matheus", "Marcos Macêdo", "Aldeota");
+			if (args.length == 0) {
 
-			o.insert("Fulano", " Macêdo Marcos", "Varjota");
-			
-			RmeServiceDirectory_Impl nameService = new RmeServiceDirectory_Impl();
+				PhoneBook o = new PhoneBook();
+				o.insert("Matheus", "Marcos Macêdo", "Aldeota");
+				o.insert("Fulano", " Macêdo Marcos", "Varjota");
+				rme.naming.RmeNaming.bind("obj", o);
+				o.activate();
 
-			nameService.activate();
-		} catch (arcademis.ArcademisException e) {
-		} catch (arcademis.concreteComponents.MalformedURLException e) {
+			} else {
+				MobileAction.execute("127.0.0.1/obj");
+			}
+
+		} catch (ReconfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ArcademisException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (AlreadyBoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-	}*/
-	
-	public static void main(String[] args)
-	{
-        try
-        {
-        	RmeConfigurator c = new RmeConfigurator();
-			c.configure();
-			
-			PhoneBook o = new PhoneBook();			
-			o.insert("Matheus", "Marcos Macêdo", "Aldeota");
-			o.insert("Fulano", " Macêdo Marcos", "Varjota");
-			rme.naming.RmeNaming.bind("obj", o);
-			o.activate();			
-
-        }
-        catch (Exception e)
-        {
-			e.printStackTrace();
-        }
 	}
 }
