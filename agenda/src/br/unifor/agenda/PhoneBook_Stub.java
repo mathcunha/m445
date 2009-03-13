@@ -1,5 +1,6 @@
 package br.unifor.agenda;
 
+import br.unifor.mobile.MobileStub;
 import arcademis.MarshalException;
 import arcademis.NetworkException;
 import arcademis.Stream;
@@ -7,7 +8,7 @@ import rme.MultiServerStub;
 import rme.RmeStream;
 import rme.RmeStreamFc;
 
-public class PhoneBook_Stub extends MultiServerStub {
+public class PhoneBook_Stub extends MobileStub {
 
 	public Pessoa getPhoneAddress(String name) throws NetworkException {
 		
