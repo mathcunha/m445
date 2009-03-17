@@ -68,11 +68,12 @@ public class RmeActivator extends Activator implements Runnable {
 		isActive = true;
 		BlockingAcceptor acc = (BlockingAcceptor)OrbAccessor.getAcceptor(super.remoteObject.getRef().getEpid());
 		try {
-			while(isActive) {
-				RmeRequestReceiver r = (RmeRequestReceiver)OrbAccessor.getServiceHandler(ArcademisConstants.REQUEST_RECEIVER);
+			while (isActive) {
+				RmeRequestReceiver r = (RmeRequestReceiver) OrbAccessor
+						.getServiceHandler(ArcademisConstants.REQUEST_RECEIVER);
 				r.setProtocol(OrbAccessor.getProtocol());
 				r.setDispatcher(this.dispatcher);
-				acc.accept(r);
+				acc.accept(r, isActive);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
