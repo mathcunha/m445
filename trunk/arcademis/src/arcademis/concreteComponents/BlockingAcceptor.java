@@ -27,9 +27,14 @@ public class BlockingAcceptor extends Acceptor {
 	 * @throws NetworkException in the case an error takes place in the network
 	 * layer.
 	 */
-	public void accept(ServiceHandler sh) throws NetworkException {
+	public void accept(ServiceHandler sh, boolean isActive) throws NetworkException {
 		super.connectionServer.accept();
-		Channel ch = super.connectionServer.getChannel();
-		sh.open(ch);
+		if (isActive) {
+			Channel ch = super.connectionServer.getChannel();
+			sh.open(ch);
+		} else {
+			throw new NetworkException("Objeto migrado!");
+		}
+		
 	}
 }
