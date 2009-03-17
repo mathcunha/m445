@@ -43,5 +43,5 @@ public abstract class Acceptor implements EventHandler {
 	 * @throws NetworkException in the case an error takes place in the network
 	 * layer.
 	 */
-	public abstract void accept(ServiceHandler h) throws NetworkException;
+	public abstract void accept(ServiceHandler h, boolean isActive) throws NetworkException;
 }
