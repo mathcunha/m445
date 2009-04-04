@@ -45,7 +45,22 @@ public class ProxyThread implements Runnable {
 			System.out.println(proxyRequest);
 
 			System.out.println("Repassando dados para o servidor...");
-			Socket connector = new Socket(host, 80);
+
+			String hostAux;
+			if (host.indexOf(":") > -1) {
+				hostAux = host.substring(0, host.indexOf(":"));
+			} else {
+				hostAux = host;
+			}
+
+			int portAux;
+			if (host.indexOf(":") > -1) {
+				portAux = new Integer(host.substring(host.indexOf(":") + 1));
+			} else {
+				portAux = 80;
+			}
+
+			Socket connector = new Socket(hostAux, portAux);
 
 			OutputStreamWriter d = new OutputStreamWriter(connector
 					.getOutputStream());
