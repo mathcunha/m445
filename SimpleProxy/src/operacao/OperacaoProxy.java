@@ -1,18 +1,27 @@
 package operacao;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.rpc.ServiceException;
 
 import proxy.server.ReplicatedServiceProxy_Impl;
 
-public class OperacaoProxy extends ReplicatedServiceProxy_Impl implements operacao.Operacao_PortType  {
+public class OperacaoProxy extends ReplicatedServiceProxy_Impl implements
+		operacao.Operacao_PortType {
 	private String _endpoint = null;
 	private operacao.Operacao_PortType operacao_PortType = null;
 
 	public OperacaoProxy() {
 		_initOperacaoProxy();
+	}
+
+	public OperacaoProxy(List<URL> list) {
+		_initOperacaoProxy();
+		setEndpointLst(list);
 	}
 
 	public OperacaoProxy(String endpoint) {
@@ -63,13 +72,14 @@ public class OperacaoProxy extends ReplicatedServiceProxy_Impl implements operac
 		Integer resultado = null;
 		try {
 			URL lEndPoint = super.chooseEndpoint();
-			if(lEndPoint== null){
+			if (lEndPoint == null) {
 
 				resultado = serviceLocator.getOperacaoPort().somar(x, y);
-			}else{
-				resultado = serviceLocator.getOperacaoPort(lEndPoint).somar(x, y);
+			} else {
+				resultado = serviceLocator.getOperacaoPort(lEndPoint).somar(x,
+						y);
 			}
-			
+
 		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -77,12 +87,43 @@ public class OperacaoProxy extends ReplicatedServiceProxy_Impl implements operac
 		return resultado;
 	}
 
-	public static void main(String args[]){
-		OperacaoProxy lOperacaoProxy = new OperacaoProxy();
+	public static void main(String args[]) {
+
+		List<URL> list = new ArrayList<URL>(3);
 		try {
-			Integer r = lOperacaoProxy.somar(new Integer(args[0]), new Integer(args[1]));
-			
-			System.out.println("resultado "+r);
+			list.add(new URL("http://localhost:8080/Operacao/Operacao"));
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			list.add(new URL("http://localhost:38080/Operacao/Operacao"));
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			list.add(new URL("http://localhost:38081/Operacao/Operacao"));
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		OperacaoProxy lOperacaoProxy = new OperacaoProxy(list);
+
+		try {
+			Integer r = lOperacaoProxy.somar(new Integer(args[0]), new Integer(
+					args[1]));
+
+			System.out.println("resultado " + r);
+			 r = lOperacaoProxy.somar(new Integer(args[0]), new Integer(
+					args[1]));
+
+			System.out.println("resultado " + r);
+			 r = lOperacaoProxy.somar(new Integer(args[0]), new Integer(
+					args[1]));
+
+			System.out.println("resultado " + r);
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
