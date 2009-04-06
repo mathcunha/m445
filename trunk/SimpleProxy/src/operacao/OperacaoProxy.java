@@ -1,10 +1,13 @@
 package operacao;
 
+import java.net.URL;
 import java.rmi.RemoteException;
 
 import javax.xml.rpc.ServiceException;
 
-public class OperacaoProxy implements operacao.Operacao_PortType {
+import proxy.server.ReplicatedServiceProxy_Impl;
+
+public class OperacaoProxy extends ReplicatedServiceProxy_Impl implements operacao.Operacao_PortType  {
 	private String _endpoint = null;
 	private operacao.Operacao_PortType operacao_PortType = null;
 
@@ -59,7 +62,14 @@ public class OperacaoProxy implements operacao.Operacao_PortType {
 		Operacao_ServiceLocator serviceLocator = new Operacao_ServiceLocator();
 		Integer resultado = null;
 		try {
-			resultado = serviceLocator.getOperacaoPort().somar(x, y);
+			URL lEndPoint = super.chooseEndpoint();
+			if(lEndPoint== null){
+
+				resultado = serviceLocator.getOperacaoPort().somar(x, y);
+			}else{
+				resultado = serviceLocator.getOperacaoPort(lEndPoint).somar(x, y);
+			}
+			
 		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
