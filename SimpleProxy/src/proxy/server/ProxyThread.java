@@ -5,6 +5,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import proxy.policy.EndPoint;
+import proxy.policy.ServiceBroker;
+
 public class ProxyThread implements Runnable {
 	Socket socket;
 
@@ -22,21 +25,26 @@ public class ProxyThread implements Runnable {
 			byte buffer[] = new byte[bufferSize];
 			int readBytes = inputStream.read(buffer);
 
-			String host = "";
+			String service = "";
 			String request = new String(buffer);
-			int indice = request.indexOf("Host: ");
+			int indice = request.indexOf("POST ");
 			if (indice > -1) {
-				int indice2 = request.indexOf("\n", indice);
-				host = request.substring(indice + 6, indice2 - 1);
+				int indice2 = request.indexOf(" ", indice + 5);
+				service = request.substring(indice + 5, indice2 - 1);
 			}
 
-			String hostName = (host.split(":"))[0];
-			String port = (host.split(":"))[1];
+			int limite = service.lastIndexOf("/");
+			String serviceName = (service.substring(0, service.lastIndexOf("/",
+					limite)));
+			serviceName = serviceName.substring(serviceName.lastIndexOf("/") + 1);
 
 			// Implementar a política de seleção
+			ServiceBroker serviceBroker = new ServiceBroker();
+			EndPoint endPoint = serviceBroker.chooseEndpoint(serviceName);
 
 			// Host remoto
-			Socket connector = new Socket(hostName, new Integer(port));
+			Socket connector = new Socket(endPoint.getHostName(), endPoint
+					.getPort());
 			OutputStream outputStream = connector.getOutputStream();
 			InputStream inputStream2 = connector.getInputStream();
 
@@ -51,7 +59,8 @@ public class ProxyThread implements Runnable {
 			}
 
 			int bufferSize2 = 1024;
-			byte buffer2[] = new byte[bufferSize2];																																										Thread.sleep(1000);
+			byte buffer2[] = new byte[bufferSize2];
+			Thread.sleep(1000);
 			int readBytes2 = inputStream2.read(buffer2);
 
 			while (readBytes2 == bufferSize2) {
