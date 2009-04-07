@@ -1,13 +1,9 @@
 package proxy.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.ServerSocket;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
-
-import org.apache.commons.io.IOUtils;
 
 public class ProxyThread implements Runnable {
 	Socket socket;
@@ -17,86 +13,68 @@ public class ProxyThread implements Runnable {
 	}
 
 	public void run() {
-		BufferedReader reader;
-		OutputStreamWriter writer = null;
 		try {
-			reader = new BufferedReader(new InputStreamReader(socket
-					.getInputStream()));
 
-			writer = new OutputStreamWriter(socket.getOutputStream());
-			StringBuilder request = new StringBuilder();
-			String temp;
+			InputStream inputStream = socket.getInputStream();
+			OutputStream outputStream2 = socket.getOutputStream();
+
+			int bufferSize = 1024;
+			byte buffer[] = new byte[bufferSize];
+			int readBytes = inputStream.read(buffer);
+
 			String host = "";
-
-			while (!(temp = reader.readLine()).equals("")) {
-				if (temp.indexOf("Accept-Encoding") == -1) {
-					request.append(temp);
-				}
-
-				request.append("\r\n");
-
-				if (temp.indexOf("Host:") > -1) {
-					host = temp.split(": ")[1];
-				}
+			String request = new String(buffer);
+			int indice = request.indexOf("Host: ");
+			if (indice > -1) {
+				int indice2 = request.indexOf("\n", indice);
+				host = request.substring(indice + 6, indice2 - 1);
 			}
 
-			request.append("\r\n");
-			String proxyRequest = new String(request);
-			System.out.println(proxyRequest);
+			String hostName = (host.split(":"))[0];
+			String port = (host.split(":"))[1];
 
-			System.out.println("Repassando dados para o servidor...");
+			// Implementar a política de seleção
 
-			String hostAux;
-			if (host.indexOf(":") > -1) {
-				hostAux = host.substring(0, host.indexOf(":"));
-			} else {
-				hostAux = host;
+			// Host remoto
+			Socket connector = new Socket(hostName, new Integer(port));
+			OutputStream outputStream = connector.getOutputStream();
+			InputStream inputStream2 = connector.getInputStream();
+
+			while (readBytes == bufferSize) {
+				outputStream.write(buffer);
+				readBytes = inputStream.read(buffer);
+			}
+			if (readBytes != -1) {
+				outputStream.write(buffer, 0, readBytes);
+				outputStream.flush();
+				// running = false;
 			}
 
-			int portAux;
-			if (host.indexOf(":") > -1) {
-				portAux = new Integer(host.substring(host.indexOf(":") + 1));
-			} else {
-				portAux = 80;
+			int bufferSize2 = 1024;
+			byte buffer2[] = new byte[bufferSize2];																																										Thread.sleep(1000);
+			int readBytes2 = inputStream2.read(buffer2);
+
+			while (readBytes2 == bufferSize2) {
+				outputStream2.write(buffer2);
+				readBytes2 = inputStream2.read(buffer2);
+				System.out.println("readBytes2: " + readBytes2);
+			}
+			if (readBytes2 != -1) {
+				outputStream2.write(buffer2, 0, readBytes2);
+				outputStream2.flush();
+				// running = false;
 			}
 
-			Socket connector = new Socket(hostAux, portAux);
-
-			OutputStreamWriter d = new OutputStreamWriter(connector
-					.getOutputStream());
-			d.write(proxyRequest);
-			d.flush();
-
-			System.out.println("Esperando resposta de volta do servidor.");
-			String resp = IOUtils.toString(connector.getInputStream());
-			System.out.println(resp);
-
-			d.close();
+			socket.close();
 			connector.close();
-
-			System.out.println("Repassando do proxy para o browser.");
-
-			writer.write(resp);
-			writer.flush();
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
-			try {
-				writer.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				socket.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
-
 }
