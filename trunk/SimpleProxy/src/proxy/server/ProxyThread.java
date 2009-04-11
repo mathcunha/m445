@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Date;
 
 import proxy.policy.EndPoint;
+import proxy.policy.EndPointInfo;
 import proxy.policy.ServiceBroker;
 
 public class ProxyThread implements Runnable {
@@ -40,7 +42,9 @@ public class ProxyThread implements Runnable {
 
 			// Implementar a política de seleção
 			ServiceBroker serviceBroker = new ServiceBroker();
-			EndPoint endPoint = serviceBroker.chooseEndpoint(serviceName);
+			EndPointInfo endPointInfo = new EndPointInfo(serviceName, null, null,
+					null, null, new Date().getTime());
+			EndPoint endPoint = serviceBroker.chooseEndpoint(endPointInfo);
 
 			// Host remoto
 			Socket connector = new Socket(endPoint.getHostName(), endPoint
