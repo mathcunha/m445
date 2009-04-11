@@ -21,7 +21,7 @@ public class OperacaoProxy extends ReplicatedServiceProxy_Impl implements
 
 	public OperacaoProxy(List<URL> list) {
 		_initOperacaoProxy();
-		setEndpointLst(list);
+		setEndPointList(list);
 	}
 
 	public OperacaoProxy(String endpoint) {
@@ -71,7 +71,7 @@ public class OperacaoProxy extends ReplicatedServiceProxy_Impl implements
 		Operacao_ServiceLocator serviceLocator = new Operacao_ServiceLocator();
 		Integer resultado = null;
 		try {
-			URL lEndPoint = super.chooseEndpoint();
+			URL lEndPoint = super.chooseEndPoint();
 			if (lEndPoint == null) {
 
 				resultado = serviceLocator.getOperacaoPort().somar(x, y);
