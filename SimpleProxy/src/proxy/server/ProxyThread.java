@@ -4,17 +4,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.URL;
 import java.util.Date;
 
-import proxy.policy.EndPoint;
 import proxy.policy.EndPointInfo;
+import proxy.policy.HistoryServiceProxy;
 import proxy.policy.ServiceBroker;
 
 public class ProxyThread implements Runnable {
 	Socket socket;
+	
+	ServiceBroker serviceBroker;
 
-	public ProxyThread(Socket socket) {
+	public ProxyThread(Socket socket, ServiceBroker serviceBroker) {
 		this.socket = socket;
+		
+		this.serviceBroker = serviceBroker;
 	}
 
 	public void run() {
@@ -40,15 +45,15 @@ public class ProxyThread implements Runnable {
 					limite)));
 			serviceName = serviceName.substring(serviceName.lastIndexOf("/") + 1);
 
-			// Implementar a política de seleção
-			ServiceBroker serviceBroker = new ServiceBroker();
-			EndPointInfo endPointInfo = new EndPointInfo(serviceName, null, null,
-					null, null, new Date().getTime());
-			EndPoint endPoint = serviceBroker.chooseEndpoint(endPointInfo);
+			
+			EndPointInfo endPointInfo = new EndPointInfo(serviceName, "Somar", 1, new Date().getTime());
+			URL endPoint = serviceBroker.chooseEndpoint(endPointInfo);
+			
+			
 
 			// Host remoto
-			Socket connector = new Socket(endPoint.getHostName(), endPoint
-					.getPort());
+			Long inicio = System.currentTimeMillis();
+			Socket connector = new Socket(endPoint.getHost(), endPoint.getPort());
 			OutputStream outputStream = connector.getOutputStream();
 			InputStream inputStream2 = connector.getInputStream();
 
@@ -77,6 +82,11 @@ public class ProxyThread implements Runnable {
 				outputStream2.flush();
 				// running = false;
 			}
+			
+			Long fim = System.currentTimeMillis();
+			endPointInfo.setUrl(endPoint);
+			endPointInfo.setTimeResponse(fim-inicio);
+			serviceBroker.addEndPointInfo(endPointInfo);
 
 			socket.close();
 			connector.close();
