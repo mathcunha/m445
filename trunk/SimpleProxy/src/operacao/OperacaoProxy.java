@@ -8,9 +8,8 @@ import java.util.List;
 
 import javax.xml.rpc.ServiceException;
 
-import proxy.server.ReplicatedServiceProxy_Impl;
 
-public class OperacaoProxy extends ReplicatedServiceProxy_Impl implements
+public class OperacaoProxy implements
 		operacao.Operacao_PortType {
 	private String _endpoint = null;
 	private operacao.Operacao_PortType operacao_PortType = null;
@@ -21,7 +20,7 @@ public class OperacaoProxy extends ReplicatedServiceProxy_Impl implements
 
 	public OperacaoProxy(List<URL> list) {
 		_initOperacaoProxy();
-		setEndPointList(list);
+		
 	}
 
 	public OperacaoProxy(String endpoint) {
@@ -71,7 +70,7 @@ public class OperacaoProxy extends ReplicatedServiceProxy_Impl implements
 		Operacao_ServiceLocator serviceLocator = new Operacao_ServiceLocator();
 		Integer resultado = null;
 		try {
-			URL lEndPoint = super.chooseEndPoint();
+			URL lEndPoint = null;
 			if (lEndPoint == null) {
 
 				resultado = serviceLocator.getOperacaoPort().somar(x, y);

@@ -48,12 +48,10 @@ public class EndPointInfo {
 	 * @param time Tempo de resposta do serviço 
 	 * @param date Data de invocação do serviço
 	 */
-	public EndPointInfo(String service, String operation, Integer nodes, URL url, Long time, Long date) {
+	public EndPointInfo(String service, String operation, Integer nodes, Long date) {
 		this.serviceName = service;
 		this.operationName = operation;
-		this.nodeNumber = nodes;
-		this.timeResponse = time;
-		this.url = url;
+		this.nodeNumber = nodes;		
 		this.dateEndPontInfo = date;
 	}
 	

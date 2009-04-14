@@ -10,4 +10,5 @@ public interface ReplicatedServiceProxy {
 	void addEndPointInfo(EndPointInfo endPointInfo);
 	
 	void setEndPointList(List<URL> list);
+	List<URL> getEndpointLst();
 }

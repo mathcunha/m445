@@ -3,7 +3,13 @@ package proxy.server;
 import java.net.*;
 import java.io.*;
 
+import proxy.policy.ServiceBroker;
+
 public class ProxyServer {
+	
+	// Implementar a política de seleção
+	private static ServiceBroker serviceBroker = new ServiceBroker();
+	
 	public static void main(String[] args) throws IOException {
 		ServerSocket serverSocket = null;
 		boolean listening = true;
@@ -26,7 +32,7 @@ public class ProxyServer {
 		while (listening) {
 			Socket cliente = serverSocket.accept();
 			System.out.println("iniciando");
-			new Thread(new ProxyThread(cliente),"ProxyThread").start();
+			new Thread(new ProxyThread(cliente, serviceBroker),"ProxyThread").start();
 		}
 		serverSocket.close();
 	}
