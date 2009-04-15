@@ -10,14 +10,17 @@ public class ServiceBroker {
 	
 	private Hashtable<String, List<URL>> servicos;
 	
-	private ReplicatedServiceProxy lReplicatedServiceProxy ;
+	private HistoryServiceProxy lReplicatedServiceProxy ;
 	
 	public ServiceBroker() {
 		servicos = new Hashtable<String, List<URL>>();
 		List<URL> lista = new ArrayList<URL>();
 		
 		try {
-			lista.add(new URL("http://127.0.0.1:8080"));
+			
+			lista.add(new URL("http://localhost:8080/Operacao/Operacao"));
+			lista.add(new URL("http://localhost:38080/Operacao/Operacao"));
+			lista.add(new URL("http://localhost:38081/Operacao/Operacao"));
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -26,14 +29,13 @@ public class ServiceBroker {
 		
 		//Cria um serviço de escolha com 5 considerações no hitórico e com uma 
 		//tolerância de serviços dos ultimos 3 segundos
-		lReplicatedServiceProxy = new HistoryServiceProxy("Operacao","Somar", 5,30000L);
+		lReplicatedServiceProxy = new HistoryServiceProxy("Operacao","Somar", 10,30000L);
 		((HistoryServiceProxy) lReplicatedServiceProxy).resetEndPointInfo(lista);
 	}
 
 	public URL chooseEndpoint(EndPointInfo endPointInfo) {
-		lReplicatedServiceProxy.addEndPointInfo(endPointInfo);
 		
-		URL endPoint = lReplicatedServiceProxy.chooseEndPoint();
+		URL endPoint = lReplicatedServiceProxy.chooseEndPoint(endPointInfo);
 		
 		return endPoint;
 	}
