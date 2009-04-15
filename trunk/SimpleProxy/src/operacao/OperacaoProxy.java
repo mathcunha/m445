@@ -1,26 +1,15 @@
 package operacao;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.rpc.ServiceException;
 
-
-public class OperacaoProxy implements
-		operacao.Operacao_PortType {
+public class OperacaoProxy implements operacao.Operacao_PortType {
 	private String _endpoint = null;
 	private operacao.Operacao_PortType operacao_PortType = null;
 
 	public OperacaoProxy() {
 		_initOperacaoProxy();
-	}
-
-	public OperacaoProxy(List<URL> list) {
-		_initOperacaoProxy();
-		
 	}
 
 	public OperacaoProxy(String endpoint) {
@@ -67,60 +56,70 @@ public class OperacaoProxy implements
 
 	@Override
 	public Integer somar(Integer x, Integer y) throws RemoteException {
-		Operacao_ServiceLocator serviceLocator = new Operacao_ServiceLocator();
-		Integer resultado = null;
-		try {
-			URL lEndPoint = null;
-			if (lEndPoint == null) {
-
-				resultado = serviceLocator.getOperacaoPort().somar(x, y);
-			} else {
-				resultado = serviceLocator.getOperacaoPort(lEndPoint).somar(x,
-						y);
-			}
-
-		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Integer resultado = getOperacao_PortType().somar(x, y);
 		return resultado;
 	}
 
 	public static void main(String args[]) {
 
-		List<URL> list = new ArrayList<URL>(3);
-		try {
-			list.add(new URL("http://localhost:8080/Operacao/Operacao"));
-		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			list.add(new URL("http://localhost:38080/Operacao/Operacao"));
-		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			list.add(new URL("http://localhost:38081/Operacao/Operacao"));
-		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		System.getProperties().put("http.proxyHost", "localhost");// http proxy
+		// server
+		System.getProperties().put("http.proxyPort", "111"); // http port #
+		System.getProperties().put("http.proxySet", "true");
 
-		OperacaoProxy lOperacaoProxy = new OperacaoProxy(list);
+		OperacaoProxy lOperacaoProxy = new OperacaoProxy();
 
 		try {
 			Integer r = lOperacaoProxy.somar(new Integer(args[0]), new Integer(
 					args[1]));
 
 			System.out.println("resultado " + r);
-			 r = lOperacaoProxy.somar(new Integer(args[0]), new Integer(
-					args[1]));
+			r = lOperacaoProxy
+					.somar(new Integer(args[0]), new Integer(args[1]));
 
 			System.out.println("resultado " + r);
-			 r = lOperacaoProxy.somar(new Integer(args[0]), new Integer(
-					args[1]));
+			r = lOperacaoProxy
+					.somar(new Integer(args[0]), new Integer(args[1]));
+
+			System.out.println("resultado " + r);
+			r = lOperacaoProxy
+					.somar(new Integer(args[0]), new Integer(args[1]));
+
+			System.out.println("resultado " + r);
+			r = lOperacaoProxy
+					.somar(new Integer(args[0]), new Integer(args[1]));
+
+			System.out.println("resultado " + r);
+			r = lOperacaoProxy
+					.somar(new Integer(args[0]), new Integer(args[1]));
+
+			System.out.println("resultado " + r);
+			r = lOperacaoProxy
+					.somar(new Integer(args[0]), new Integer(args[1]));
+
+			System.out.println("resultado " + r);
+			r = lOperacaoProxy
+					.somar(new Integer(args[0]), new Integer(args[1]));
+
+			System.out.println("resultado " + r);
+			r = lOperacaoProxy
+					.somar(new Integer(args[0]), new Integer(args[1]));
+
+			System.out.println("resultado " + r);
+			r = lOperacaoProxy
+					.somar(new Integer(args[0]), new Integer(args[1]));
+
+			System.out.println("resultado " + r);
+			r = lOperacaoProxy
+					.somar(new Integer(args[0]), new Integer(args[1]));
+
+			System.out.println("resultado " + r);
+			r = lOperacaoProxy
+					.somar(new Integer(args[0]), new Integer(args[1]));
+
+			System.out.println("resultado " + r);
+			r = lOperacaoProxy
+					.somar(new Integer(args[0]), new Integer(args[1]));
 
 			System.out.println("resultado " + r);
 		} catch (NumberFormatException e) {

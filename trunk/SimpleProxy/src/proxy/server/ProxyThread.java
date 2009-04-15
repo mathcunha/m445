@@ -49,7 +49,6 @@ public class ProxyThread implements Runnable {
 			EndPointInfo endPointInfo = new EndPointInfo(serviceName, "Somar", 1, new Date().getTime());
 			URL endPoint = serviceBroker.chooseEndpoint(endPointInfo);
 			
-			
 
 			// Host remoto
 			Long inicio = System.currentTimeMillis();

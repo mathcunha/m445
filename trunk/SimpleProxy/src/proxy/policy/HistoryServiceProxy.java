@@ -3,7 +3,10 @@ package proxy.policy;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map.Entry;
 
 /*
  * Valores a serem levados para escolher o serviço:
@@ -13,17 +16,13 @@ import java.util.List;
  *   Quantidade de entradas do histórico a ser utilizado;
  *   Prazo de validade das entradas do histórico.
  */
-public class HistoryServiceProxy implements ReplicatedServiceProxy {
+public class HistoryServiceProxy extends ReplicatedServiceProxy_Impl {
 
-	List<URL> endpointList = new ArrayList<URL>();
+	
 
 	private List<EndPointInfo> listEndPointInfo;
 
-	private List<EndPointInfo> listEndPointInfoSimilares;
-
-	private EndPointInfo endPointInfo;
-
-	/**
+		/**
 	 * Quantidade de entradas no histórico do tipo do EndPoint a ser utilizada
 	 * para se obter o EndPoint desejado.
 	 */
@@ -48,14 +47,15 @@ public class HistoryServiceProxy implements ReplicatedServiceProxy {
 
 	public boolean resetEndPointInfo(List<URL> destinos) {
 		boolean retorno = true;
+		
+		setEndPointList( destinos);
 
 		this.listEndPointInfo = new ArrayList<EndPointInfo>(destinos.size());
 
 		Long dataAtual = System.currentTimeMillis();
 
 		for (URL url : destinos) {
-			EndPointInfo lEndPointInfo = new EndPointInfo(service, operation,
-					k, dataAtual);
+			EndPointInfo lEndPointInfo = new EndPointInfo(service, operation,1, dataAtual);
 			lEndPointInfo.setUrl(url);
 			lEndPointInfo.setTimeResponse(0l);
 
@@ -65,26 +65,29 @@ public class HistoryServiceProxy implements ReplicatedServiceProxy {
 		return retorno;
 	}
 
-	@Override
-	public URL chooseEndPoint() {
+	
+	public URL chooseEndPoint(EndPointInfo endPointInfo) {
 
 		/**
 		 * A melhor URL a ser escolhida.
 		 */
-		URL bestURL;
+		URL bestURL = null;
 
 		/**
 		 * Inicializa a lista de serviço similares.
 		 */
-		this.listEndPointInfoSimilares = new ArrayList<EndPointInfo>();
+		List<EndPointInfo> listEndPointInfoSimilares = new ArrayList<EndPointInfo>();
 
 		if (listEndPointInfo.size() == 1) {
 			return endPointInfo.getUrl();
 		}
 
 		int quantidadeSimilares = 0;
-		for (EndPointInfo epi : listEndPointInfo) {
-
+		System.out.println("listEndPointInfo "+listEndPointInfo.size());
+		
+		for (int i =  listEndPointInfo.size()-1; i >= 0; i--) {
+			EndPointInfo epi = listEndPointInfo.get(i);
+			
 			if (epi.getServiceName().equals(endPointInfo.getServiceName())
 					&& epi.getOperationName().equals(
 							endPointInfo.getOperationName())
@@ -99,20 +102,38 @@ public class HistoryServiceProxy implements ReplicatedServiceProxy {
 			}
 		}
 
+		System.out.println("quantidadeSimilares ("+quantidadeSimilares +")");
 		if (quantidadeSimilares == 0 || quantidadeSimilares == 1) {
-			return endPointInfo.getUrl();
+			//Tem que ser aleatório
+			System.out.println("Escolha aleatória! ");
+			return super.chooseEndPoint();
 		}
 
-		EndPointInfo endPointInfoAnterior = listEndPointInfoSimilares.get(0);
-		bestURL = endPointInfoAnterior.getUrl();
-		for (int i = 1; i < listEndPointInfoSimilares.size(); i++) {
-
-			EndPointInfo endPointInfoAtual = listEndPointInfoSimilares.get(i);
-			if (endPointInfoAtual.getTimeResponse() < endPointInfoAnterior
-					.getTimeResponse()) {
-				bestURL = endPointInfoAtual.getUrl();
+		//Somando os tempos por URL
+		Hashtable<URL, Info> dados = new Hashtable<URL, Info>(); 
+		for (EndPointInfo endPointInfo2 : listEndPointInfoSimilares) {
+			Info info = dados.get(endPointInfo2.getUrl());
+			if(info == null){
+				info = new Info();
+				dados.put(endPointInfo2.getUrl(), info);
+			}
+			info.qtdDados++;
+			info.somaTempo += endPointInfo2.getTimeResponse();
+		}
+		
+		
+		//Calculando a média
+		long menorTempo = Long.MAX_VALUE;
+		for (Entry<URL, Info> valor : dados.entrySet()) {
+			long tempoAtual = valor.getValue().somaTempo / valor.getValue().qtdDados;
+			System.out.println(valor.getKey() +" "+valor.getValue());
+			if(menorTempo >= tempoAtual){
+				bestURL = valor.getKey();
+				menorTempo = tempoAtual;
 			}
 		}
+				
+			
 		System.out.println("URL escolhida: " + bestURL.toString());
 		return bestURL;
 	}
@@ -123,21 +144,15 @@ public class HistoryServiceProxy implements ReplicatedServiceProxy {
 			this.listEndPointInfo = new ArrayList<EndPointInfo>();
 		}
 		this.listEndPointInfo.add(endPointInfo);
-		this.endPointInfo = endPointInfo;
 	}
-
-	@Override
-	public void setEndPointList(List<URL> list) {
-		endpointList = new ArrayList<URL>(list.size() + 1);
-		for (URL url : list) {
-			endpointList.add(url);
+	
+	class Info{
+		public long somaTempo = 0;
+		public int qtdDados = 0;
+		
+		@Override
+		public String toString(){
+			return ("somaTempo ("+somaTempo+") qtdDados ("+ qtdDados+") ");
 		}
 	}
-
-	@Override
-	public List<URL> getEndpointLst() {
-
-		return endpointList;
-	}
-
 }
